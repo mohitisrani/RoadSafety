@@ -90,22 +90,9 @@ button[type=submit]:hover {
   <h1 align="middle">Data Stats</h1>
 </div>
 
-<OL>
-
-<LI><%= link_to "Calculate the total number of Accidents", url_for(controller: :queries, action: :query1) %>
-
-<LI><%= link_to "Show top 10 tuples", url_for(controller: :queries, action: :query2) %>
-
-<LI><%= link_to "Total number of Casualties", url_for(controller: :queries, action: :query3) %>
-
-<LI><%= link_to "Total number of Vehicles involved", url_for(controller: :queries, action: :query4) %>
-
-<LI><%= link_to "Average age of Vehicle", url_for(controller: :queries, action: :query5) %>
-
-</OL>
 
 
-
+<%= @query4 %>
 
 
 

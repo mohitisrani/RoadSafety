@@ -4,7 +4,11 @@ Rails.application.routes.draw do
 
   root 'queries#index'
 
-  get 'count' =>'queries#query'
+  get 'q1' => 'queries#query1'
+  get 'q2' =>'queries#query2'
+  get 'q3' =>'queries#query3'
+  get 'q4' =>'queries#query4'
+  get 'q5' =>'queries#query5'
 
 
 end
