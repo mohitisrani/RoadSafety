@@ -91,15 +91,18 @@ button[type=submit]:hover {
 </div>
 
 
+<OL>
 
 
-<% @query2.rows.each do |q| %>
+<% for q in 1..@query2.rows.length %>
 
 
-<%=  q[0]  %>
+<LI> <%=  @query2.rows[q-1][0]   %>
 
 
 <% end %>
+
+</OL>
 
 
 

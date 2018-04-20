@@ -11,7 +11,7 @@ class QueriesController < ApplicationController
 	end
 
 	def query2
-		@query2 = ActiveRecord::Base.connection.exec_query("SELECT accident_index FROM ACCIDENTS where rownum<=9")
+		@query2 = ActiveRecord::Base.connection.exec_query("SELECT accident_index FROM ACCIDENTS where rownum<=10")
 		
 	end
 
