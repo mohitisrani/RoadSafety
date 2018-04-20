@@ -4,5 +4,7 @@ Rails.application.routes.draw do
 
   root 'posts#index'
 
+  get 'count' =>'queries#index'
+
 
 end
