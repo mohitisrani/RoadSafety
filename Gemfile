@@ -7,6 +7,7 @@ end
 
 # [mojito] For oracle oci8 adapter
 gem 'ruby-oci8'
+gem 'marshal-structure' #, '~> 2.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.6'

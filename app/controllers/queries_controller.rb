@@ -3,6 +3,9 @@ class QueriesController < ApplicationController
 
 	def index
 		ActiveRecord::Base.establish_connection()
+
+
+
 		"Successfully Connected to DataBase"
 	end
 
@@ -11,7 +14,9 @@ class QueriesController < ApplicationController
 	end
 
 	def query2
-		@query2 = ActiveRecord::Base.connection.exec_query("SELECT accident_index FROM ACCIDENTS where rownum<=10")
+		page = params[:page].to_i
+		@query2 = ActiveRecord::Base.connection.exec_query("SELECT a from (select accident_index a, rownum r FROM ACCIDENTS) where r >= #{page*10+1} AND r <= #{page*10+15}");
+
 		
 	end
 

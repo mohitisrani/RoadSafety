@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
 
-  root 'queries#index'
+  root 'queries#index' 
 
   get 'q1' => 'queries#query1'
   get 'q2' =>'queries#query2'
