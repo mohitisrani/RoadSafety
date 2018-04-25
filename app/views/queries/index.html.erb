@@ -1,4 +1,89 @@
 <!DOCTYPE html>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+input[type=text], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+label {
+    padding: 12px 12px 12px 0;
+    display: inline-block;
+}
+
+input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+    width: 75px;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+button[type=submit] {
+    background-color: rgb(61,62,91);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+    width: 100%;
+}
+
+button[type=submit]:hover {
+    background-color: rgb(41,52,71);
+}
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+.col-25 {
+    float: left;
+    width: 50%;
+    margin-top: 6px;
+    padding: 20px;
+}
+
+.col-75 {
+    float: right;
+    width: 50%;
+    margin-top: 6px;
+    padding: 20px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+    .col-25, .col-75, input[type=submit] {
+        width: 100%;
+        margin-top: 0;
+    }
+}
+</style>
+
  <head>
     <title>Road Safety</title>
     <link rel="stylesheet" type="text/css" href="blog.css">
@@ -12,7 +97,7 @@
 <body>
 
     <header>
-      <h1>Data Stats</h1>
+      <h1>Road Safety Database</h1>
     </header>
 
     
@@ -27,93 +112,43 @@
     <div id="container">
 
       <article>
-        <section class="post-head">
-            <h2>Queries</h2>
-  <!--         <small>            
-            Posted on <time datetime="2018-04-12">April 12th, 2018</time>.
-          </small> -->
-        </section>
-
         <section class="post-body">
-            <button onclick="myFunc()"> Get Average of Vehicles in accident </button>
-            <label id="try"></label>
-            <canvas id="chartTry" height="300px" width="300px"></canvas>
-          <p>
-            <OL>
-
-            <% pageQOnClick  = eval(params[:pageQ]).clone %>
-            <% pageQOnClick[:qs1] = true %>
-            <LI><%= link_to "Calculate the total number of Accidents", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
-                <% pageQ_  = eval(params[:pageQ]) %>
-                <% if pageQ_[:qs1] ==true %>
-                    <section class="qResult">
-                        <p>
-                            <%= ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM ACCIDENTS")[0]["count(*)"] %>
-                        </p>
-                    </section>
-                <% end %>
-                
-            <% pageQOnClick  = eval(params[:pageQ]).clone %>
-            <% pageQOnClick[:qs2] =  0%>
-            <LI><%= link_to "Show first 10 tuples", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
-                <% pageQ_  = eval(params[:pageQ]) %>
-                <% if pageQ_[:qs2] != -1 %>
-                    <section class="qResult">
-                        <p> 
-                            <% qR = ActiveRecord::Base.connection.exec_query("SELECT a from (select accident_index a, rownum r FROM ACCIDENTS) where r >= #{pageQ_[:qs2]*10+1} AND r <= #{pageQ_[:qs2]*10+10}"); %>
-                                <OL start = <%= pageQ_[:qs2]*10+1%> >
-                                    <% for q in 1..qR.rows.length %>
-                                         <LI> <%=  qR.rows[q-1][0]   %>
-                                    <% end %>
-                                </OL>
-                                <small>
-                                    <% pageQOnClick  = eval(params[:pageQ]).clone %>
-                                    <% pageQOnClick[:qs2] =  pageQOnClick[:qs2] + 1%>
-                                    <%= link_to "NEXT 10 tuples", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
-                                </small>
-                        </p>
-                    </section>
-                <% end %>
-
-            <% pageQOnClick  = eval(params[:pageQ]).clone %>
-            <% pageQOnClick[:qs3] = true %>
-            <LI><%= link_to "Total number of Casualties", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
-                <% pageQ_  = eval(params[:pageQ]) %>
-                <% if pageQ_[:qs3] ==true %>
-                     <section class="qResult">
-                            <p>
-                                <%= ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM casualties")[0]["count(*)"] %>
-                            </p>
-                    </section>
-                <% end %>
-
-            <% pageQOnClick  = eval(params[:pageQ]).clone %>
-            <% pageQOnClick[:qs4] = true %>
-            <LI><%= link_to "Total number of Vehicles involved", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
-                 <% pageQ_  = eval(params[:pageQ]) %>
-                 <% if pageQ_[:qs4] ==true %>
-                     <section class="qResult">
-                            <p>
-                                <%= ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM vehicles")[0]["count(*)"] %>
-                            </p>
-                    </section>
-                <% end %>
-
-            <% pageQOnClick  = eval(params[:pageQ]).clone %>
-            <% pageQOnClick[:qs5] = true %>
-            <LI><%= link_to "Average age of Vehicle", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
-                 <% pageQ_  = eval(params[:pageQ]) %>
-                 <% if pageQ_[:qs5] ==true %>
-                     <section class="qResult">
-                            <p>
-                                <%= ActiveRecord::Base.connection.exec_query("SELECT AVG(age_of_vehicle) as av FROM vehicles")[0]["av"].round(2) %>
-                            </p>
-                    </section>
-                <% end %>
-
-            </OL>
-          </p>
-
+            <div class="row">
+              <div class="col-25">
+                <button id="vehicleAge" type="submit" onclick="getVehiclesAge()">Get Average of Vehicles in accident </button>
+              </div>
+              <div class="col-75">
+                <button id="accident" type="submit" onclick="getAccidents()">Get total Number of Accidents</button>
+              </div>
+              <!-- <div class="col-75">
+                <label id="getVehiclesAge"></label>
+              </div> -->
+            </div>
+            <!-- <div class="row">
+              <div class="col-75">
+                <label id="getAccidents"></label>
+              </div>
+            </div> -->
+            <div class="row">
+              <div class="col-25">
+                <button id="casualties" type="submit" onclick="getCasualities()">Get total number of Casualities</button>
+              </div>
+              <div class="col-75">
+                <button id="vehicle" type="submit" onclick="getVehicles()">Get total number of Vehicles</button>
+              </div>
+              <!-- <div class="col-75">
+                <label id="getCasualities"></label>
+              </div> -->
+            </div>
+            <!-- <div class="row">
+              
+              <div class="col-75">
+                <label id="getVehicles"></label>
+              </div>
+            </div> -->
+            <div height="150px" width="100px">
+                <canvas id="chartTry" height="150px" width="100px"></canvas>
+            </div>
         </section>
 
         <section class="post-foot">
@@ -136,8 +171,26 @@
 
 
 <script type="text/javascript">
-    function myFunc(){
-        document.getElementById("try").innerHTML = <%= ActiveRecord::Base.connection.exec_query("SELECT AVG(age_of_vehicle) as av FROM vehicles")[0]["av"].round(2)%>
+    function getVehiclesAge(){
+        document.getElementById("vehicleAge").innerHTML = <%= ActiveRecord::Base.connection.exec_query("SELECT AVG(age_of_vehicle) as av FROM vehicles")[0]["av"].round(2)%>
+    }
+</script>
+
+<script type="text/javascript">
+    function getAccidents(){
+        document.getElementById("accident").innerHTML = <%= ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM ACCIDENTS")[0]["count(*)"] %>
+    }
+</script>
+
+<script type="text/javascript">
+    function getCasualities(){
+        document.getElementById("casualties").innerHTML = <%= ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM casualties")[0]["count(*)"] %>
+    }
+</script>
+
+<script type="text/javascript">
+    function getVehicles(){
+        document.getElementById("vehicle").innerHTML = <%= ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM vehicles")[0]["count(*)"] %>
     }
 </script>
 

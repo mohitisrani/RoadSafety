@@ -43,7 +43,27 @@
       </article>
 
 
-      
+      <% pageQOnClick  = eval(params[:pageQ]).clone %>
+            <% pageQOnClick[:qs2] =  0%>
+            <LI><%= link_to "Show first 10 tuples", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
+                <% pageQ_  = eval(params[:pageQ]) %>
+                <% if pageQ_[:qs2] != -1 %>
+                    <section class="qResult">
+                        <p> 
+                            <% qR = ActiveRecord::Base.connection.exec_query("SELECT a from (select accident_index a, rownum r FROM ACCIDENTS) where r >= #{pageQ_[:qs2]*10+1} AND r <= #{pageQ_[:qs2]*10+10}"); %>
+                                <OL start = <%= pageQ_[:qs2]*10+1%> >
+                                    <% for q in 1..qR.rows.length %>
+                                         <LI> <%=  qR.rows[q-1][0]   %>
+                                    <% end %>
+                                </OL>
+                                <small>
+                                    <% pageQOnClick  = eval(params[:pageQ]).clone %>
+                                    <% pageQOnClick[:qs2] =  pageQOnClick[:qs2] + 1%>
+                                    <%= link_to "NEXT 10 tuples", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
+                                </small>
+                        </p>
+                    </section>
+                <% end %>
 
     </div> <!-- #container -->
 
