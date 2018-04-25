@@ -154,6 +154,8 @@
     // showLines:false,
     data: {
         datasets: [{
+            pointBorderColor: 'blue',
+            pointRadius: 0.05,
             label: 'Scatter Dataset',
             data: [
                 <% for q in 1..data.rows.length %>
@@ -164,7 +166,7 @@
                 <% end %>
             {
                 x: 0,
-                y: 50
+                y: 51
             }]
         }]
     },
