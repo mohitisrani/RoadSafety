@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20180425092241) do
 
   create_table "accidents", primary_key: "accident_index", id: :string, limit: 20, force: :cascade do |t|
     t.integer "location_easting_osgr", limit: 8, precision: 8
@@ -63,6 +63,32 @@ ActiveRecord::Schema.define(version: 0) do
     t.integer "casualty_type", limit: 8, precision: 8
     t.integer "casualty_home_area_type", limit: 8, precision: 8
     t.integer "casualty_imd_decile", limit: 8, precision: 8
+  end
+
+  create_table "cities", primary_key: "city", id: :string, limit: 40, force: :cascade do |t|
+    t.decimal "longitude", precision: 25, scale: 20
+    t.decimal "latitude", precision: 25, scale: 20
+  end
+
+  create_table "comics", force: :cascade do |t|
+    t.string "title"
+    t.integer "issue", precision: 38
+    t.string "publisher"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "lookup", primary_key: ["Tables", "code"], force: :cascade do |t|
+    t.string "Tables", limit: 40, null: false
+    t.integer "code", limit: 8, precision: 8, null: false
+    t.string "label", limit: 100
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "password"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "vehicles", primary_key: ["accident_index", "vehicle_reference"], force: :cascade do |t|

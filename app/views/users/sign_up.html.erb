@@ -1,0 +1,5 @@
+<%= form_for(@user, url: url_for(action: 'create', controller: 'users')) do |f| %>
+  <%= f.email_field :email, required: true %> </br>
+  <%= f.password_field :password, required: true %> </br>
+  <%= f.submit %>
+<% end %>

@@ -98,6 +98,7 @@ button[type=submit]:hover {
 
     <header>
       <h1>Road Safety Database</h1>
+      <%= link_to 'Sign Out', destroy_user_session_path %>
     </header>
 
     
@@ -115,10 +116,12 @@ button[type=submit]:hover {
         <section class="post-body">
             <div class="row">
               <div class="col-25">
-                <button id="vehicleAge" type="submit" onclick="getVehiclesAge()">Get Average of Vehicles in accident </button>
+                <%= link_to 'Get Average of Vehicles in Accident', q5_path %>
+                <!--<button id="vehicleAge" type="submit" onclick="getVehiclesAge()">Get Average of Vehicles in accident </button>-->
               </div>
               <div class="col-75">
-                <button id="accident" type="submit" onclick="getAccidents()">Get total Number of Accidents</button>
+                <%= link_to 'Get total Number of Accidents', q1_path %>
+                <!--<button id="accident" type="submit" onclick="getAccidents()">Get total Number of Accidents</button>-->
               </div>
               <!-- <div class="col-75">
                 <label id="getVehiclesAge"></label>
@@ -131,10 +134,12 @@ button[type=submit]:hover {
             </div> -->
             <div class="row">
               <div class="col-25">
-                <button id="casualties" type="submit" onclick="getCasualities()">Get total number of Casualities</button>
+                <%= link_to 'Get Average of Vehicles in accident', q3_path %>
+                <!--<button id="casualties" type="submit" onclick="getCasualities()">Get total number of Casualities</button>-->
               </div>
               <div class="col-75">
-                <button id="vehicle" type="submit" onclick="getVehicles()">Get total number of Vehicles</button>
+                <%= link_to 'Get Average of Vehicles in accident', q4_path %>
+                <!--<button id="vehicle" type="submit" onclick="getVehicles()">Get total number of Vehicles</button>-->
               </div>
               <!-- <div class="col-75">
                 <label id="getCasualities"></label>
@@ -167,78 +172,49 @@ button[type=submit]:hover {
     </footer>
 
 
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>-->
+
+<!--<script>-->
+//    var ctx=document.getElementById("chartTry");
+//    // console.log()
+    <!--<% data = ActiveRecord::Base.connection.exec_query("select longitude, latitude from accidents") %>-->
 
 
-
-<script type="text/javascript">
-    function getVehiclesAge(){
-        document.getElementById("vehicleAge").innerHTML = <%= ActiveRecord::Base.connection.exec_query("SELECT AVG(age_of_vehicle) as av FROM vehicles")[0]["av"].round(2)%>
-    }
-</script>
-
-<script type="text/javascript">
-    function getAccidents(){
-        document.getElementById("accident").innerHTML = <%= ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM ACCIDENTS")[0]["count(*)"] %>
-    }
-</script>
-
-<script type="text/javascript">
-    function getCasualities(){
-        document.getElementById("casualties").innerHTML = <%= ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM casualties")[0]["count(*)"] %>
-    }
-</script>
-
-<script type="text/javascript">
-    function getVehicles(){
-        document.getElementById("vehicle").innerHTML = <%= ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM vehicles")[0]["count(*)"] %>
-    }
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
-
-<script>const ctx=document.getElementById("chartTry");
-    // console.log()
-    <% data = ActiveRecord::Base.connection.exec_query("select longitude, latitude from accidents") %>
-    
-
-    console.log(ctx);
-    let chartTry = new Chart(ctx, {
-    type: 'scatter',
-    // showLines:false,
-    data: {
-        datasets: [{
-            pointBorderColor: 'blue',
-            pointRadius: 0.05,
-            label: 'Scatter Dataset',
-            data: [
-                <% for q in 1..data.rows.length %>
-                    {
-                        x: <%=  data.rows[q-1][0]   %>,
+//    console.log(ctx);
+//    var chartTry = new Chart(ctx, {
+//    type: 'scatter',
+//    // showLines:false,
+//    data: {
+//        datasets: [{
+//            pointBorderColor: 'blue',
+//            pointRadius: 0.05,
+//            label: 'Scatter Dataset',
+//            data: [
+                <!--<% for q in 1..data.rows.length %>-->
+//                    {
+//                        x: <%=  data.rows[q-1][0]   %>,
                         y: <%=  data.rows[q-1][1]   %>
-                    }, 
-                <% end %>
-            {
-                x: 0,
-                y: 51
-            }]
-        }]
-    },
-    options: {
-        showLines:false,
-        scales: {
-            xAxes: [{
-
-                min:40,
-                type: 'linear',
-                position: 'bottom'
-            }]
-        }
-    }
-});</script>
-
-<!-- <script src="js/main.js"></script> -->
-
-
+//                    },
+                <!--<% end %>-->
+//            {
+//                x: 0,
+//                y: 51
+//            }]
+//        }]
+//    },
+//    options: {
+//        showLines:false,
+//        scales: {
+//            xAxes: [{
+//
+//                min:40,
+//                type: 'linear',
+//                position: 'bottom'
+//            }]
+//        }
+//    }
+//});
+<!--</script>-->
 
 
 </body>
