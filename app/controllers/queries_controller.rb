@@ -32,4 +32,19 @@ class QueriesController < ApplicationController
 		month = params[:month].to_i%12+1
 		@map = ActiveRecord::Base.connection.exec_query("select longitude, latitude from (select longitude,latitude,extract(month from \"Date\") month1 from accidents) where month1 in #{month}");
 	end
+
+	def accident
+		aid = params[:aid]
+		@accident = ActiveRecord::Base.connection.exec_query("SELECT *  FROM ACCIDENTS where accident_index in '#{aid}'");
+	end
+
+	def casualties
+		aid = params[:aid]
+		@casualties = ActiveRecord::Base.connection.exec_query("SELECT *  FROM CASUALTIES where accident_index in '#{aid}'");
+	end
+
+	def vehicles
+		aid = params[:aid]
+		@vehicles = ActiveRecord::Base.connection.exec_query("SELECT *  FROM VEHICLES where accident_index in '#{aid}'");
+	end
 end

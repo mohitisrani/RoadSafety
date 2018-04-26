@@ -21,21 +21,24 @@
 
   <% if params[:page] == nil %>
   <% page = -1 %>
+  <% month = 1 %>
   <% params[:page] = page.to_s %>
+  <% params[:month] = month.to_s %>
   <% end %>
 
 
  <ul>
   <li><%= link_to 'Home',  url_for(controller: :queries, action: :index) %></li>
-  <li><%= link_to 'Map',  url_for(controller: :queries, action: :map) %></li>
+  <li><%= link_to 'Map',  url_for(controller: :queries, action: :map, :month => params[:month].to_i+1) %></li>
   <li><%= link_to 'Records',  url_for(controller: :queries, action: :query2, :page => params[:page].to_i+1) %></li>
-  <li style="float:right">
+  <li style="float:right; display: block;  ">
        <% if @user %>
       <%= link_to 'Sign Out', destroy_user_session_path, method: :posts %>
       <% else  %>
       <%= link_to 'Sign In', create_user_session_path, method: :posts %>
       <% end %>
   </li>
+   <li style="display: block;    float: right;padding: 4px"><input type="text" placeholder="Search Accident ID.."></li>
 </ul> 
 
 
