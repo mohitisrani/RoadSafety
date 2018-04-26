@@ -17,7 +17,6 @@ class UsersController < ApplicationController
   end
 
   def sign_in #Shows sign in form only
-    byebug
     (return redirect_to dashboard_path, notice: "Already Signed In!") if current_user
   end
 

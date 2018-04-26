@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get 'q3' =>'queries#query3'
   get 'q4' =>'queries#query4'
   get 'q5' =>'queries#query5'
+  get 'chart' =>'queries#chart'
   get 'dashboard' => 'queries#index', as: "dashboard"
 
 

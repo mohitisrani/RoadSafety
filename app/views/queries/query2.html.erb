@@ -1,63 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<section class="post-body">
+  <p>
 
-</head>
-<body>
+    <table style="width: 100%">
+      <thead>
+      <tr>
+        <% @query2.columns.each do |col| %>
+        <th><%= col %></th>
+        <%end%>
+      </tr>
+      </thead>
 
-    <header>
-      <h1>Data Stats</h1>
-    </header>
-
-
-    <div id="container">
-
-      <article>
-        <section class="post-head">
-            <h2>Queries</h2>
-  <!--         <small>            
-            Posted on <time datetime="2018-04-12">April 12th, 2018</time>.
-          </small> -->
-        </section>
-
-        <section class="post-body">
-          <p>
-            <OL start = <%=params[:page].to_i*15+1%> >
-                <% for q in 1..@query2.rows.length %>
-                    <LI> <%=  @query2.rows[q-1][0]   %>
-                <% end %>
-            </OL>
-            <small>
-                <%= link_to "NEXT 15 tuples", url_for(controller: :queries, action: :query2, :page => params[:page].to_i+1) %>
-            </small>
-          </p>
-
-        </section>
-
-        <section class="post-foot">
-          <p>Filed under general</p>
-          <!-- <p>Written by Mohit</p> -->
-        </section>
-      </article>
+      <tbody>
+      <% @query2.rows.each do |row| %>
+        <tr>
+            <td><%= row[0] %></td>
+            <% for c in 2..@query2.columns.length %>
+                <td><%= row[c-1] %></td>
+            <%end%>
+          
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
 
 
-      
+    <!-- <OL class="records" start = <%=params[:page].to_i*10+1%> >
+        <% for q in 1..@query2.rows.length %>
+            <LI> <%=  @query2.rows[q-1][0]   %>
+        <% end %>
+    </OL> -->
 
-    </div> <!-- #container -->
+    <small>
+        <%= link_to "NEXT 10 tuples", url_for(controller: :queries, action: :query2, :page => params[:page].to_i+1) %>
+    </small>
+  </p>
 
-    <footer>
-      <p>&copy;2018 &bull; Group29DBMS</p>
-    </footer>
+</section>
 
-
-
-
-
-
-
-
-
-
-</body>
-</html>

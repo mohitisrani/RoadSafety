@@ -84,139 +84,59 @@ button[type=submit]:hover {
 }
 </style>
 
- <head>
-    <title>Road Safety</title>
-    <link rel="stylesheet" type="text/css" href="blog.css">
-
-     <!--[if IE]>
-<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
-
-  </head>
-
-<body>
-
-    <header>
-      <h1>Road Safety Database</h1>
-      <%= link_to 'Sign Out', destroy_user_session_path %>
-    </header>
-
-    
-    <% if params[:pageQ] == nil %>
-        <% pageQ = Hash.new(false) %>
-        <% pageQ[:qs2] = -1 %>
-        <% params[:pageQ] = pageQ.to_s %>
-
-    <% end %>
 
 
-    <div id="container">
+<section class="post-head">
+    <h2>Counter</h2>
+    <small>            
+        As on <time> <%=Date.today.to_s(:long)%></time>.
+    </small>
+</section>
 
-      <article>
-        <section class="post-body">
-            <div class="row">
-              <div class="col-25">
-                <%= link_to 'Get Average of Vehicles in Accident', q5_path %>
-                <!--<button id="vehicleAge" type="submit" onclick="getVehiclesAge()">Get Average of Vehicles in accident </button>-->
-              </div>
-              <div class="col-75">
-                <%= link_to 'Get total Number of Accidents', q1_path %>
-                <!--<button id="accident" type="submit" onclick="getAccidents()">Get total Number of Accidents</button>-->
-              </div>
-              <!-- <div class="col-75">
-                <label id="getVehiclesAge"></label>
-              </div> -->
-            </div>
-            <!-- <div class="row">
-              <div class="col-75">
-                <label id="getAccidents"></label>
-              </div>
-            </div> -->
-            <div class="row">
-              <div class="col-25">
-                <%= link_to 'Get Average of Vehicles in accident', q3_path %>
-                <!--<button id="casualties" type="submit" onclick="getCasualities()">Get total number of Casualities</button>-->
-              </div>
-              <div class="col-75">
-                <%= link_to 'Get Average of Vehicles in accident', q4_path %>
-                <!--<button id="vehicle" type="submit" onclick="getVehicles()">Get total number of Vehicles</button>-->
-              </div>
-              <!-- <div class="col-75">
-                <label id="getCasualities"></label>
-              </div> -->
-            </div>
-            <!-- <div class="row">
-              
-              <div class="col-75">
-                <label id="getVehicles"></label>
-              </div>
-            </div> -->
-            <div height="150px" width="100px">
-                <canvas id="chartTry" height="150px" width="100px"></canvas>
-            </div>
-        </section>
+<div class="row">
 
-        <section class="post-foot">
-          <p>Filed under general</p>
-          <!-- <p>Written by Mohit</p> -->
-        </section>
-      </article>
+    <div class="col-25">
+        <%= link_to 'Number of Casualties involved in Accidents', url_for(controller: :queries, action: :query4) %>
+        <!--<button id="vehicleAge" type="submit" onclick="getVehiclesAge()">Get Average of Vehicles in accident </button>-->
+</div>
 
+    <div class="col-75">
+        <%= link_to 'Number of Accidents Recorded in Database', url_for(controller: :queries, action: :query1) %>
+        <!--<button id="accident" type="submit" onclick="getAccidents()">Get total Number of Accidents</button>-->
+</div>
+<!-- <div class="col-75">
+<label id="getVehiclesAge"></label>
+</div> -->
 
-      
+</div>  <!-- row >
 
-    </div> <!-- #container -->
+<!-- <div class="row">
+<div class="col-75">
+<label id="getAccidents"></label>
+</div>
+</div> -->
 
-    <footer>
-      <p>&copy;2018 &bull; Group29DBMS</p>
-    </footer>
+<div class="row">
 
+    <div class="col-25">
+        <%= link_to 'Number of Vehicles involved in Accidents', url_for(controller: :queries, action: :query3) %>
+        <!--<button id="casualties" type="submit" onclick="getCasualities()">Get total number of Casualities</button>-->
+</div>
 
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>-->
+    <div class="col-75">
+        <%= link_to 'Average Age of Vehicles involved in Accidents', url_for(controller: :queries, action: :query5) %>
+        <!--<button id="vehicle" type="submit" onclick="getVehicles()">Get total number of Vehicles</button>-->
+</div>
+<!-- <div class="col-75">
+<label id="getCasualities"></label>
+</div> -->
 
-<!--<script>-->
-//    var ctx=document.getElementById("chartTry");
-//    // console.log()
-    <!--<% data = ActiveRecord::Base.connection.exec_query("select longitude, latitude from accidents") %>-->
+</div> <!-- row >
 
+<!-- <div class="row">
+<div class="col-75">
+<label id="getVehicles"></label>
+</div>
+</div> -->
 
-//    console.log(ctx);
-//    var chartTry = new Chart(ctx, {
-//    type: 'scatter',
-//    // showLines:false,
-//    data: {
-//        datasets: [{
-//            pointBorderColor: 'blue',
-//            pointRadius: 0.05,
-//            label: 'Scatter Dataset',
-//            data: [
-                <!--<% for q in 1..data.rows.length %>-->
-//                    {
-//                        x: <%=  data.rows[q-1][0]   %>,
-                        y: <%=  data.rows[q-1][1]   %>
-//                    },
-                <!--<% end %>-->
-//            {
-//                x: 0,
-//                y: 51
-//            }]
-//        }]
-//    },
-//    options: {
-//        showLines:false,
-//        scales: {
-//            xAxes: [{
-//
-//                min:40,
-//                type: 'linear',
-//                position: 'bottom'
-//            }]
-//        }
-//    }
-//});
-<!--</script>-->
-
-
-</body>
-</html>
 

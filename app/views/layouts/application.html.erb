@@ -9,6 +9,51 @@
   </head>
 
   <body>
-    <%= yield %>
+  	  <header>
+      <h1>Road Safety Database</h1>
+      	
+      		<% if @user %>
+      		<%= @user.email %>
+      		<% end %>
+
+    </header>
+
+
+  <% if params[:page] == nil %>
+  <% page = -1 %>
+  <% params[:page] = page.to_s %>
+  <% end %>
+
+
+ <ul>
+  <li><%= link_to 'Home',  url_for(controller: :queries, action: :index) %></li>
+  <li><%= link_to 'Map',  url_for(controller: :queries, action: :map) %></li>
+  <li><%= link_to 'Records',  url_for(controller: :queries, action: :query2, :page => params[:page].to_i+1) %></li>
+  <li style="float:right">
+       <% if @user %>
+      <%= link_to 'Sign Out', destroy_user_session_path, method: :posts %>
+      <% else  %>
+      <%= link_to 'Sign In', create_user_session_path, method: :posts %>
+      <% end %>
+  </li>
+</ul> 
+
+
+
+
+    <div id="container">
+    	<article>
+    		<section class="post-body">
+
+    			<%= yield %>
+
+		    </section>
+		</article>
+	</div>  <!-- Container -->
+
+    <footer>
+      <p>&copy;2018 &bull; Group29DBMS</p>
+    </footer>
+
   </body>
 </html>

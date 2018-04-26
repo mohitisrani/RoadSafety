@@ -73,3 +73,32 @@
     
   </body>
 </html>
+
+
+<table class="table-bordered table-responsive table">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Start time</th>
+        <th>End time</th>
+        <th>Discount Coupon</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @promotion_links.each do |promotion_link| %>
+        <tr>
+          <td><%= promotion_link.title %></td>
+          <td><%= promotion_link.description %></td>
+          <td><%= promotion_link.start_time %></td>
+          <td><%= promotion_link.end_time %></td>
+          <td><%= promotion_link.discount_coupon.title %></td>
+          <td><%= link_to 'Show', promotion_link %></td>
+          <td><%= link_to 'Edit', edit_promotion_link_path(promotion_link) %></td>
+          <td><%= link_to 'Destroy', promotion_link, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
