@@ -13,7 +13,8 @@
       <tbody>
       <% @query2.rows.each do |row| %>
         <tr>
-            <td><%= row[0] %></td>
+            <!-- <td><%= row[0] %></td> -->
+            <td><%= link_to row[0],  url_for(controller: :queries, action: :accident, :aid => row[0]) %></td>
             <% for c in 2..@query2.columns.length %>
                 <td><%= row[c-1] %></td>
             <%end%>

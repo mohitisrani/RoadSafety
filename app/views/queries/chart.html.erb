@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<style>
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    width: 600px;
+    height: 600px;
+    align-self: center;
+    margin: auto;
+}
+</style>
+
+
+
+<section class="post-head">
+</section>
+
+<div class="row">
+  <div class="col-75">
+      <button id="automaker" type="submit" onclick="getAutomaker()">
+        Automaker vs fatality
+      </button>
+  </div>
+  <div class="col-25">
+    <button id="accident" type="submit" onclick="getAccidents1()">
+      Engine Capacity vs Accident Severity
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-75">
+      <button id="accident" type="submit" onclick="getGenderFatality1()">
+        Gender based Fatality ratio
+      </button>
+  </div>
+  <div class="col-25">
+    <button id="accident" type="submit" onclick="getGenderFatality2()">
+      Gender based Small Accidents
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-75">
+      <button id="accident" type="submit" onclick="getyoydecAcc()">
+        Year on  Year Pedestrian Accidents
+      </button>
+  </div>
+  <div class="col-25">
+    <button id="accident" type="submit" onclick="getAccidents1()">
+      5
+    </button>
+  </div>
+</div>
+
+
+
+<div class="container">
+  <div>
+    <canvas width="600" height="600" id="graph"></canvas>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
+
+<script>function getAccidents() {
+	new Chart(document.getElementById("graph"), {
+    type: 'bar',
+    data: {
+      labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+      datasets: [
+        {
+          label: "Population (millions)",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: [2478,5267,734,784,433]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Predicted world population (millions) in 2050'
+      }
+    }
+});
+} </script>
+
+<script>function getAccidents1() {
+  var data;
+  <%data=ActiveRecord::Base.connection.exec_query("Select round(avg(ENGINE_CAPACITY_CC),2) as Engine_Capacity, ACCIDENT_SEVERITY from accidents, vehicles where accidents.Accident_Index = vehicles.Accident_Index group by ACCIDENT_SEVERITY")%>
+  //console.log(data);
+  <% x = Array.new; y =Array.new ;%>
+  <% data.rows.each {|i| %>
+  <% x.push(i[1]); y.push(i[0]) ;}%>
+
+
+	new Chart(document.getElementById("graph"), {
+    type: 'bar',
+    data: {
+      labels: <%=x%>,
+      datasets: [
+        {
+          label: "Engine Capacity (cc)",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: <%=y%>
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Engine Capacity vs Accident Severity'
+      }
+    }
+});
+} 
+
+function getAutomaker(){
+  var data;
+  // document.getElementById("graph").getContext("2d").clearRect();
+  <%data=ActiveRecord::Base.connection.exec_query("select cast(AutoMaker as varchar(50)), Fatality_percentage from (select Z.AutoMaker , Z.cou3, F.cou, Round((Z.cou3 / F.cou)*100, 2) as Fatality_percentage from (select AutoMaker, sum(cou2) as cou3 from (select trim(V.make) as AutoMaker, M.cou1 as cou2 from (select ACCIDENT_INDEX, VEHICLE_REFERENCE, count(*) as cou1 from CASUALTIES where CASUALTY_SEVERITY in 1 group by ACCIDENT_INDEX, VEHICLE_REFERENCE order by cou1 desc) M, Vehicles V where M.ACCIDENT_INDEX = V.ACCIDENT_INDEX and M.VEHICLE_REFERENCE = V.VEHICLE_REFERENCE and V.VEHICLE_TYPE in (8,9) ) group by AutoMaker) Z, (select Ma, count(*) as cou from (select trim(VEHICLES.MAKE) as Ma from VEHICLES) group by Ma having count(*) > 10) F where Z.AutoMaker = F.Ma order by Fatality_percentage desc) where rownum<=10")%>
+  //console.log(data);
+  <% x = Array.new; y =Array.new ;%>
+
+  <% data.rows.each {|i| %>
+  <% x.push(i[0]); y.push(i[1]);}%>
+
+  // var x_ = '<%= x.to_json %>';
+  // x_.replace(/&quot;/g, '"');
+  // var x_ = <%=x%>;
+  // JSON.parse(x_.replace(/&quot;/g,'"'));
+
+  var x_=<%= raw x%>;
+  // console.log(x_);
+
+  new Chart(document.getElementById("graph"), {
+    type: 'bar',
+    data: {
+      labels: x_,
+      datasets: [
+        {
+          label: "Fatality percentage",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: <%=y%>
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'AutoMaker vs Fatality'
+      }
+    }
+});
+}
+
+
+function getyoydecAcc(){
+  var data;
+  // document.getElementById("graph").getContext("2d").clearRect();
+  <%data=ActiveRecord::Base.connection.exec_query("select * from (select LOOKUP.Label as District, S.cou2015 as CASUALTIES_In_2015, S.cou2016 as CASUALTIES_In_2016, S.decrease , ROW_NUMBER() OVER (Order BY S.decrease) as TopFive, ROW_NUMBER() OVER (Order BY S.decrease Desc) as BottomFive from (select A.LOCAL_AUTHORITY_DISTRICT, cou2015, cou2016, Round(((cou2016 - cou2015) / cou2015)*100) as decrease  from (select LOCAL_AUTHORITY_DISTRICT, extract(year from \"Date\") as Ye, count(*) as cou2015 from ACCIDENTS, CASUALTIES where ACCIDENTS.ACCIDENT_INDEX  = CASUALTIES.ACCIDENT_INDEX and PEDESTRIAN_CRS_PHYSICAL_FACLT = 1 group by LOCAL_AUTHORITY_DISTRICT, extract(year from \"Date\") ORDER BY LOCAL_AUTHORITY_DISTRICT, Ye) A, (select LOCAL_AUTHORITY_DISTRICT, extract(year from \"Date\") as Ye, count(*) as cou2016 from ACCIDENTS, CASUALTIES where ACCIDENTS.ACCIDENT_INDEX  = CASUALTIES.ACCIDENT_INDEX and PEDESTRIAN_CRS_PHYSICAL_FACLT = 1 group by LOCAL_AUTHORITY_DISTRICT, extract(year from \"Date\") ORDER BY LOCAL_AUTHORITY_DISTRICT, Ye) B where A.LOCAL_AUTHORITY_DISTRICT = B.LOCAL_AUTHORITY_DISTRICT and A.Ye = 2015 and B.Ye = 2016 and cou2016 > 10 and cou2015 > 10 order by decrease desc) S, LOOKUP where S.LOCAL_AUTHORITY_DISTRICT = LOOKUP.CODE and \"Tables\" = 'Local_Authority_District') where TopFive <=5 or BottomFive <=5")%>
+  //console.log(data);
+  <% x = Array.new; y =Array.new ;z =Array.new ;w =Array.new ;%>
+
+  <% data.rows.each {|i| %>
+  <% x.push(i[0]); y.push(i[1]);z.push(i[2]);w.push(i[3]);}%>
+
+  // var x_ = '<%= x.to_json %>';
+  // x_.replace(/&quot;/g, '"');
+  // var x_ = <%=x%>;
+  // JSON.parse(x_.replace(/&quot;/g,'"'));
+
+  var x_=<%= raw x%>;
+  // console.log(x_);
+
+  new Chart(document.getElementById("graph"), {
+    type: 'bar',
+    data: {
+      labels: x_,
+      datasets: [
+        {
+          label: "2015",
+          backgroundColor: "red",
+          data: <%=y%>
+        },
+        {
+          label: "2016",
+          backgroundColor: "blue",
+          data: <%=z%>
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Year on Year District wise Pedestrain Accidents'
+      }
+    }
+});
+}
+
+
+function getGenderFatality1(){
+  var data;
+  <%data=ActiveRecord::Base.connection.exec_query("select C.firstSex, C.secondSex, Round((C.accident_severity_sum / D.total)*100 , 2) as Fatality_Ratio from (select firstSex, secondSex,accident_severity, count(*) as accident_severity_sum from  (select a.sex_of_driver as firstSex, b.sex_of_driver as secondSex, accident_severity from (select sex_of_driver, accidents.accident_index, vehicle_reference, accident_severity  from accidents, vehicles where number_of_vehicles = 2 and accidents.accident_index = vehicles.accident_index and sex_of_driver not in (-1, 3)) a,(select sex_of_driver, accidents.accident_index, vehicle_reference from accidents, vehicles where number_of_vehicles = 2 and accidents.accident_index = vehicles.accident_index and sex_of_driver not in (-1, 3)) b where a.accident_index = b.accident_index and a.vehicle_reference <> b.vehicle_reference and (a.sex_of_driver, b.sex_of_driver) not in ((2,1)) ) group by firstSex, secondSex,accident_severity) C,(select firstSex, secondSex,sum (accident_severity_sum) as total from (select firstSex, secondSex,accident_severity, count(*) as accident_severity_sum from  (select a.sex_of_driver as firstSex, b.sex_of_driver as secondSex, accident_severity from (select sex_of_driver, accidents.accident_index, vehicle_reference, accident_severity  from accidents, vehicles where number_of_vehicles = 2 and accidents.accident_index = vehicles.accident_index and sex_of_driver not in (-1, 3)) a,(select sex_of_driver, accidents.accident_index, vehicle_reference from accidents, vehicles where number_of_vehicles = 2 and accidents.accident_index = vehicles.accident_index and sex_of_driver not in (-1, 3)) b where a.accident_index = b.accident_index and a.vehicle_reference <> b.vehicle_reference and (a.sex_of_driver, b.sex_of_driver) not in ((2,1)) ) group by firstSex, secondSex,accident_severity)group by firstSex, secondSex) D where C.firstSex = D.firstSex and C.secondSex = D.secondSex and C.accident_severity = 1 order by Fatality_Ratio")%>
+  //console.log(data);
+  <% x = Array.new; y =Array.new ;%>
+
+  <% data.rows.each {|i| %>
+  <% x.push(i[0]); y.push(i[2]);}%>
+
+  // var x_ = '<%= x.to_json %>';
+  // x_.replace(/&quot;/g, '"');
+  // var x_ = <%=x%>;
+  // JSON.parse(x_.replace(/&quot;/g,'"'));
+
+  // var x_=<%= raw x%>;
+  // console.log(x_);
+
+  new Chart(document.getElementById("graph"), {
+    type: 'pie',
+    data: {
+      labels: ["Female-Female", "Male-Female", "Male-Male"],
+      datasets: [{
+        label: "Gender Based fatality (percentage)",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+        data: <%=y%>
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Gender Based fatality (percentage)'
+      }
+    }
+});
+
+
+}
+
+function getGenderFatality2(){
+
+  var data;
+  <%data=ActiveRecord::Base.connection.exec_query("select C.firstSex, C.secondSex, Round((C.accident_severity_sum / D.total)*100 , 2) as Fatality_Ratio from (select firstSex, secondSex,accident_severity, count(*) as accident_severity_sum from  (select a.sex_of_driver as firstSex, b.sex_of_driver as secondSex, accident_severity from (select sex_of_driver, accidents.accident_index, vehicle_reference, accident_severity  from accidents, vehicles where number_of_vehicles = 2 and accidents.accident_index = vehicles.accident_index and sex_of_driver not in (-1, 3)) a,(select sex_of_driver, accidents.accident_index, vehicle_reference from accidents, vehicles where number_of_vehicles = 2 and accidents.accident_index = vehicles.accident_index and sex_of_driver not in (-1, 3)) b where a.accident_index = b.accident_index and a.vehicle_reference <> b.vehicle_reference and (a.sex_of_driver, b.sex_of_driver) not in ((2,1)) ) group by firstSex, secondSex,accident_severity) C,(select firstSex, secondSex,sum (accident_severity_sum) as total from (select firstSex, secondSex,accident_severity, count(*) as accident_severity_sum from  (select a.sex_of_driver as firstSex, b.sex_of_driver as secondSex, accident_severity from (select sex_of_driver, accidents.accident_index, vehicle_reference, accident_severity  from accidents, vehicles where number_of_vehicles = 2 and accidents.accident_index = vehicles.accident_index and sex_of_driver not in (-1, 3)) a,(select sex_of_driver, accidents.accident_index, vehicle_reference from accidents, vehicles where number_of_vehicles = 2 and accidents.accident_index = vehicles.accident_index and sex_of_driver not in (-1, 3)) b where a.accident_index = b.accident_index and a.vehicle_reference <> b.vehicle_reference and (a.sex_of_driver, b.sex_of_driver) not in ((2,1)) ) group by firstSex, secondSex,accident_severity)group by firstSex, secondSex) D where C.firstSex = D.firstSex and C.secondSex = D.secondSex and C.accident_severity = 3 order by Fatality_Ratio")%>
+  //console.log(data);
+  <% x = Array.new; y =Array.new ;%>
+
+  <% data.rows.each {|i| %>
+  <% x.push(i[0]); y.push(i[2]);}%>
+
+  // var x_ = '<%= x.to_json %>';
+  // x_.replace(/&quot;/g, '"');
+  // var x_ = <%=x%>;
+  // JSON.parse(x_.replace(/&quot;/g,'"'));
+
+  // var x_=<%= raw x%>;
+  // console.log(x_);
+
+  new Chart(document.getElementById("graph"), {
+    type: 'doughnut',
+    data: {
+      labels: [ "Male-Male", "Male-Female", "Female-Female"],
+      datasets: [{
+        label: "Gender Based Small Accidents (percentage)",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+        data: <%=y%>
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Gender Based Small Accidents (percentage)'
+      }
+    }
+});
+
+
+}
+
+
+</script>
+
+
+
+<!-- <script>  </script> -->
+

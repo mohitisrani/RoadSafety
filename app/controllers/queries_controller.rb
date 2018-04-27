@@ -7,7 +7,12 @@ class QueriesController < ApplicationController
 	end
 
 	def query1
-		@query1 = ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM ACCIDENTS")[0]["count(*)"];
+		query1 = ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM ACCIDENTS")[0]["count(*)"];
+		respond_to do |format|
+			format.js {
+				@query = query1
+			}
+		end
 	end
 
 	def query2
@@ -16,15 +21,30 @@ class QueriesController < ApplicationController
 	end
 
 	def query3
-		@query3 = ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM casualties")[0]["count(*)"];
+		query3 = ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM casualties")[0]["count(*)"];
+		respond_to do |format|
+			format.js {
+				@query = query3
+			}
+		end
 	end
 
 	def query4
-		@query4 = ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM vehicles")[0]["count(*)"];
+		query4 = ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM vehicles")[0]["count(*)"];
+		respond_to do |format|
+			format.js {
+				@query = query4
+			}
+		end
 	end
 
 	def query5
-		@query5 = ActiveRecord::Base.connection.exec_query("SELECT AVG(age_of_vehicle) as av FROM vehicles")[0]["av"];
+		query5 = ActiveRecord::Base.connection.exec_query("SELECT AVG(age_of_vehicle) as av FROM vehicles")[0]["av"].round(2);
+		respond_to do |format|
+			format.js {
+				@query = query5
+			}
+		end
 	end
 
 
@@ -34,8 +54,8 @@ class QueriesController < ApplicationController
 	end
 
 	def accident
-		aid = params[:aid]
-		@accident = ActiveRecord::Base.connection.exec_query("SELECT *  FROM ACCIDENTS where accident_index in '#{aid}'");
+		@accident = params[:aid]
+		#@accident = ActiveRecord::Base.connection.exec_query("SELECT *  FROM ACCIDENTS where accident_index in '#{aid}'");
 	end
 
 	def casualties
@@ -46,5 +66,20 @@ class QueriesController < ApplicationController
 	def vehicles
 		aid = params[:aid]
 		@vehicles = ActiveRecord::Base.connection.exec_query("SELECT *  FROM VEHICLES where accident_index in '#{aid}'");
+	end
+
+	def search_query
+		search_string = params[:search]
+		search_data = ActiveRecord::Base.connection.exec_query("SELECT count(*) from Accidents where accident_index = '#{search_string}'");	
+		value = search_data.rows[0][0].to_i
+		if value <= 0
+			respond_to do |format|
+				format.js {
+					@data = "Please Enter a valid Accident Index"
+				}
+			end
+		else
+			redirect_to(controller: :queries, action: :accident, :aid => search_string)
+		end
 	end
 end

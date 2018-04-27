@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'visualize_data/viewData'
+
+  get 'visualsize_data/viewData'
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
 
@@ -17,8 +21,10 @@ Rails.application.routes.draw do
   get 'q4' =>'queries#query4'
   get 'q5' =>'queries#query5'
   get 'map' =>'queries#map'
+  get 'chart' =>'queries#chart'
   get 'AID' =>'queries#accident'
   get 'dashboard' => 'queries#index', as: "dashboard"
+  post 'search' => 'queries#search_query', as: "search"
 
 
 end

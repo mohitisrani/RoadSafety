@@ -30,6 +30,7 @@
  <ul>
   <li><%= link_to 'Home',  url_for(controller: :queries, action: :index) %></li>
   <li><%= link_to 'Map',  url_for(controller: :queries, action: :map, :month => params[:month].to_i+1) %></li>
+  <li><%= link_to 'Charts',  url_for(controller: :queries, action: :chart) %></li>
   <li><%= link_to 'Records',  url_for(controller: :queries, action: :query2, :page => params[:page].to_i+1) %></li>
   <li style="float:right; display: block;  ">
        <% if @user %>
@@ -38,10 +39,16 @@
       <%= link_to 'Sign In', create_user_session_path, method: :posts %>
       <% end %>
   </li>
-   <li style="display: block;    float: right;padding: 4px"><input type="text" placeholder="Search Accident ID.."></li>
+   <li style="display: block;    float: right;padding: 4px">
+    <!-- <input type="text" id="aid" placeholder="Search Accident ID.."> -->
+    <%= form_tag(search_path, method: 'post', remote: true) do %>
+    <%= text_field_tag :search, params[:search] %></li>
+    <!-- <li style="display: block;    float: right;padding: 4px"><%= submit_tag "Search" %> -->
+  <% end %>
+  </li>
 </ul> 
 
-
+  
 
 
     <div id="container">
@@ -60,3 +67,9 @@
 
   </body>
 </html>
+<script>
+  function submit() {
+    var val = document.getElementById("aid").value;
+    console.log($('#aid'), val);
+  }
+</script>

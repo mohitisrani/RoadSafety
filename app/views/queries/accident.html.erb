@@ -1,4 +1,77 @@
-params[:aid] = "201501BS70429"
-<%= @accident.a %>
-<%= @accident.v %>
-<%= @accident.c %>
+
+
+<% aid = @accident %>
+
+<%acc =  ActiveRecord::Base.connection.exec_query("SELECT *  FROM ACCIDENTS where accident_index in '#{aid}'"); %>
+<% acc_cols = acc.columns %>
+<% acc_rows = acc.rows %>
+
+<%cas =  ActiveRecord::Base.connection.exec_query("SELECT *  FROM CASUALTIES where accident_index in '#{aid}'"); %>
+<% cas_cols = cas.columns %>
+<% cas_rows = cas.rows %>
+
+<%veh =  ActiveRecord::Base.connection.exec_query("SELECT *  FROM VEHICLES where accident_index in '#{aid}'"); %>
+<% veh_cols = veh.columns %>
+<% veh_rows = veh.rows %>
+
+
+<section class="post-body">
+  <p>
+
+  	<h3> <%= aid %> </h3>
+  	<% for c in 1..acc_cols.length %>
+	  	<div class="row">
+	  		<div class="col-25">
+	  			<label><%= acc_cols[c-1]%></label>
+	  		</div>
+	  		<div class="col-75">
+	  			<input type="text" id=<%= acc_cols[c-1]%> value= <%=acc_rows[0][c-1]%> >
+	  		</div>
+	  	</div>
+  	<% end %>
+
+
+
+  	<h3> VEHICLE </h3>
+
+  	<% for r in 1..veh_rows.length %>
+  	<h4> Vehicle # <%=r%> </h4>
+	  	<% for c in 1..veh_cols.length %>
+		  	<div class="row">
+		  		<div class="col-25">
+		  			<label><%= veh_cols[c-1]%></label>
+		  		</div>
+		  		<div class="col-75">
+		  			<input type="text" id=<%= veh_cols[c-1]%> value=<%=veh_rows[r-1][c-1]%> >
+		  		</div>
+		  	</div>
+	  	<% end %>
+  	<% end %>
+
+    
+  	<h3> CASUALTIES </h3>
+
+  	<% for r in 1..acc_rows.length %>
+  	<h4> Casualty # <%=r%> </h4>
+	  	<% for c in 1..cas_cols.length %>
+		  	<div class="row">
+		  		<div class="col-25">
+		  			<label><%= cas_cols[c-1]%></label>
+		  		</div>
+		  		<div class="col-75">
+		  			<input type="text" id=<%= cas_cols[c-1]%> value=<%=cas_rows[r-1][c-1]%> >
+		  		</div>
+		  	</div>
+	  	<% end %>
+  	<% end %>
+
+  <button onclick="SaveData"> Save </button>
+  </p>
+
+</section>
+
+<script type="text/javascript">
+	function SaveData(argument) {
+		
+	}
+</script>
