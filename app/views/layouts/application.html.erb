@@ -31,6 +31,7 @@
   <li><%= link_to 'Home',  url_for(controller: :queries, action: :index) %></li>
   <li><%= link_to 'Map',  url_for(controller: :queries, action: :map, :month => params[:month].to_i+1) %></li>
   <li><%= link_to 'Charts',  url_for(controller: :queries, action: :chart) %></li>
+  <li><%= link_to 'Tables',  url_for(controller: :queries, action: :table) %></li>
   <li><%= link_to 'Records',  url_for(controller: :queries, action: :query2, :page => params[:page].to_i+1) %></li>
   <li style="float:right; display: block;  ">
        <% if @user %>

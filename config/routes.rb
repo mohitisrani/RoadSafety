@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get 'q5' =>'queries#query5'
   get 'map' =>'queries#map'
   get 'chart' =>'queries#chart'
+  get 'table' =>'queries#table'
   get 'AID' =>'queries#accident'
   get 'dashboard' => 'queries#index', as: "dashboard"
   post 'search' => 'queries#search_query', as: "search"

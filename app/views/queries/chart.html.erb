@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 
+<script
+  src="http://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+
 <style>
 
 .container {
@@ -51,11 +56,25 @@
       </button>
   </div>
   <div class="col-25">
-    <button id="accident" type="submit" onclick="getAccidents1()">
-      5
+    <button id="accident" type="submit" onclick="getWeekDayAcci()">
+      Day of Week Vs Number of Accidents
     </button>
   </div>
 </div>
+
+<div class="row">
+  <div class="col-50">
+      <button id="accident" type="submit" onclick="getAgeVsSeverity()">
+        Age of Vehicles Vs Severity
+      </button>
+  </div>
+  <!-- <div class="col-25">
+    <button id="accident" type="submit" onclick="getWeekDayAcci()">
+      Day of Week Vs Number of Accidents
+    </button>
+  </div> -->
+</div>
+
 
 
 
@@ -64,6 +83,12 @@
     <canvas width="600" height="600" id="graph"></canvas>
   </div>
 </div>
+
+<script type="text/javascript">
+  jQuery('#graph').on('mouseover', function(e){
+    e.preventDefault();
+  })
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
 
@@ -102,7 +127,7 @@
 	new Chart(document.getElementById("graph"), {
     type: 'bar',
     data: {
-      labels: <%=x%>,
+      labels: [ "Fatal", "Serious", "Slight"],
       datasets: [
         {
           label: "Engine Capacity (cc)",
@@ -162,6 +187,47 @@ function getAutomaker(){
 }
 
 
+function getWeekDayAcci(){
+  var data;
+  // document.getElementById("graph").getContext("2d").clearRect();
+  <%data=ActiveRecord::Base.connection.exec_query("select label as Day_of_Week, Accident_Count from (select count(*) as Accident_Count, lookup.label , day_of_week from lookup, accidents  where \"Tables\" = 'Day_of_Week' and accidents.day_of_week = lookup.code group by lookup.LABEL, day_of_week order by day_of_week asc) ")%>
+  //console.log(data);
+  <% x = Array.new; y =Array.new ;%>
+
+  <% data.rows.each {|i| %>
+  <% x.push(i[0]); y.push(i[1]);}%>
+
+  // var x_ = '<%= x.to_json %>';
+  // x_.replace(/&quot;/g, '"');
+  // var x_ = <%=x%>;
+  // JSON.parse(x_.replace(/&quot;/g,'"'));
+
+  var x_=<%= raw x%>;
+  // console.log(x_);
+
+  new Chart(document.getElementById("graph"), {
+    type: 'bar',
+    data: {
+      labels: x_,
+      datasets: [
+        {
+          label: "Day of week vs Number of Accidents",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: <%=y%>
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Day of week vs Number of Accidents'
+      }
+    }
+});
+}
+
+
 function getyoydecAcc(){
   var data;
   // document.getElementById("graph").getContext("2d").clearRect();
@@ -207,6 +273,51 @@ function getyoydecAcc(){
 });
 }
 
+function getAgeVsSeverity() {
+
+  // var data;
+  // document.getElementById("graph").getContext("2d").clearRect();
+  <%data2=ActiveRecord::Base.connection.exec_query("select a.age_of_vehicle, averageSeverity from (select age_of_vehicle, count(*) as count_accidents from accidents, vehicles where accidents.accident_index = vehicles.accident_index group by age_of_vehicle) a, (select age_of_vehicle, avg(accident_severity) as averageSeverity from accidents, vehicles where accidents.accident_index = vehicles.accident_index group by age_of_vehicle) b where a.age_of_vehicle = b.age_of_vehicle and count_accidents>100 and a.age_of_vehicle > 0 order by averageSeverity asc")%>
+
+
+
+
+  var ctx=document.getElementById("graph");
+    // <% data = @map %>
+    var chartTry = new Chart(ctx, {
+    type: 'scatter',
+    // showLines:false,
+    data: {
+        datasets: [{
+            pointBorderColor: 'blue',
+            pointRadius: 3.2,
+            label: 'Scatter Dataset',
+            data: [
+                <% for q in 1..data2.rows.length-1 %>
+                    {
+                        x: <%=  data2.rows[q-1][0]   %>,
+                        y: <%=  data2.rows[q-1][1]   %>
+                    },
+                <% end %>
+            {
+                x: <%=  data2.rows[data2.rows.length-1][0]%>,
+                y: <%=  data2.rows[data2.rows.length-1][1]%>
+            }]
+        }]
+    },
+    options: {
+        showLines:false,
+        scales: {
+            xAxes: [{
+
+                min:40,
+                type: 'linear',
+                position: 'bottom'
+            }]
+        }
+  }
+});
+}
 
 function getGenderFatality1(){
   var data;
