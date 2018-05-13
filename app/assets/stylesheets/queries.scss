@@ -13,7 +13,7 @@
 }
 
 body{
-  background-color: rgb(51,52,81);
+  background-color: rgb(80,95,137);
   background-repeat: no-repeat;
   background-size: 100% auto;
   font-family: Georgia, Times, serif;
@@ -22,7 +22,10 @@ body{
 
 h1,h2,h3 {
   font-family: Helvetica, Arial, san-serif;
+  text-align: center;
 }
+
+
 
 #container {
   width: 760px;
@@ -49,11 +52,12 @@ article p{
 }
 
 section.post-head small{
+  text-align: center;
   display: block;
-  margin: 0 0 20px;
-  padding: 0 0 20px;
+  margin: 0 0 5px;
+  padding: 0 0 5px;
   border-bottom: solid 1px #eee;
-  color: rgb(137, 206, 174)
+  color: rgb(51,52,81)
 }
 
 section.post-foot {
@@ -74,11 +78,11 @@ a{
   text-decoration: none;
 }
 a:link {
-  color: rgb(11, 119, 151)
+  color:    rgb(0,191,255);
 }
 
 a:visited {
-  color: rgb(11, 119, 151)  
+  color:    rgb(0,191,255); 
 }
 
 a:hover {
@@ -87,4 +91,24 @@ a:hover {
 
 a:active {
   color: black 
+}
+
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+
+
+th, td {
+    padding: 15px;
+}
+
+th {
+    text-align: left;
+}
+
+table {
+    border-spacing: 5px;
 }

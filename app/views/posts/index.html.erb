@@ -43,7 +43,27 @@
       </article>
 
 
-      
+      <% pageQOnClick  = eval(params[:pageQ]).clone %>
+            <% pageQOnClick[:qs2] =  0%>
+            <LI><%= link_to "Show first 10 tuples", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
+                <% pageQ_  = eval(params[:pageQ]) %>
+                <% if pageQ_[:qs2] != -1 %>
+                    <section class="qResult">
+                        <p> 
+                            <% qR = ActiveRecord::Base.connection.exec_query("SELECT a from (select accident_index a, rownum r FROM ACCIDENTS) where r >= #{pageQ_[:qs2]*10+1} AND r <= #{pageQ_[:qs2]*10+10}"); %>
+                                <OL start = <%= pageQ_[:qs2]*10+1%> >
+                                    <% for q in 1..qR.rows.length %>
+                                         <LI> <%=  qR.rows[q-1][0]   %>
+                                    <% end %>
+                                </OL>
+                                <small>
+                                    <% pageQOnClick  = eval(params[:pageQ]).clone %>
+                                    <% pageQOnClick[:qs2] =  pageQOnClick[:qs2] + 1%>
+                                    <%= link_to "NEXT 10 tuples", url_for(controller: :queries, action: :index, :pageQ => pageQOnClick.to_s) %>
+                                </small>
+                        </p>
+                    </section>
+                <% end %>
 
     </div> <!-- #container -->
 
@@ -53,3 +73,32 @@
     
   </body>
 </html>
+
+
+<table class="table-bordered table-responsive table">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Start time</th>
+        <th>End time</th>
+        <th>Discount Coupon</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @promotion_links.each do |promotion_link| %>
+        <tr>
+          <td><%= promotion_link.title %></td>
+          <td><%= promotion_link.description %></td>
+          <td><%= promotion_link.start_time %></td>
+          <td><%= promotion_link.end_time %></td>
+          <td><%= promotion_link.discount_coupon.title %></td>
+          <td><%= link_to 'Show', promotion_link %></td>
+          <td><%= link_to 'Edit', edit_promotion_link_path(promotion_link) %></td>
+          <td><%= link_to 'Destroy', promotion_link, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>

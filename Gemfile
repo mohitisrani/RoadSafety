@@ -7,11 +7,9 @@ end
 
 # [mojito] For oracle oci8 adapter
 gem 'ruby-oci8'
-gem 'marshal-structure' #, '~> 2.0'
-gem 'nyaplot'
-gem 'iruby'
-#gem 'jquery-rails'
-gem 'chart-js-rails'
+
+#gem 'marshal-structure' #, '~> 2.0'
+
 
 gem 'rails', '~> 5.1.6'
 gem 'activerecord-oracle_enhanced-adapter'

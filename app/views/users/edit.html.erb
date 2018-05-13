@@ -1,0 +1,6 @@
+<%= form_for(@user, url: url_for(controller: "users", action: "update", method: "patch")) do |f| %>
+  <%= f.hidden_field :email %>
+  <%= f.label :password, "Enter New Password" %>
+  <%= f.password_field :password, required: true %>
+  <%= f.submit %>
+<% end %>

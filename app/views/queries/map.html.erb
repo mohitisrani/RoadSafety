@@ -1,0 +1,47 @@
+<div style="width:60%; margin: 0 auto;">
+                <canvas id="chartTry"; style="width: 800px; height:1200 px; background: #fff;margin: 0 auto; display: block;" width="500" height="750"></canvas>
+ </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
+
+<script>
+
+
+
+    var ctx=document.getElementById("chartTry");
+    <% data = @map %>
+    var chartTry = new Chart(ctx, {
+    type: 'scatter',
+    // showLines:false,
+    data: {
+        datasets: [{
+            pointBorderColor: 'blue',
+            pointRadius: 0.4,
+            label: 'Scatter Dataset',
+            data: [
+                <% for q in 1..data.rows.length %>
+                    {
+                        x: <%=  data.rows[q-1][0]   %>,
+                        y: <%=  data.rows[q-1][1]   %>
+                    },
+                <% end %>
+            {
+                x: 0,
+                y: 51
+            }]
+        }]
+    },
+    options: {
+        showLines:false,
+        scales: {
+            xAxes: [{
+
+                min:40,
+                type: 'linear',
+                position: 'bottom'
+            }]
+        }
+  }
+});
+</script>

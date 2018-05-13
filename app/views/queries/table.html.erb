@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<script
+  src="http://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+
+<style>
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    width: 600px;
+    height: 600px;
+    align-self: center;
+    margin: auto;
+}
+</style>
+
+
+
+<section class="post-head">
+</section>
+
+<div class="row">
+  <div class="col-75">
+      <button id="automaker" type="submit" onclick="getQuery12()">
+        Engine Capacityv vs Accident severity
+      </button>
+  </div>
+
+  <div class="col-25">
+    <button id="accident" type="submit" onclick="getQuery2()">
+      Safest Car
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-75">
+      <button id="accident" type="submit" onclick="getQuery11()">
+        Cities with Most Accidents
+      </button>
+  </div>
+  <div class="col-25">
+    <button id="accident" type="submit" onclick="getQuery10()">
+      Most Dangerous Junctions
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-75">
+      <button id="accident" type="submit" onclick="getQuery9()">
+        Roundabout vs CrossRoads
+      </button>
+  </div>
+  <div class="col-25">
+    <button id="accident" type="submit" onclick="getQuery8()">
+      Uncontrolled vs Controlled Junction Accidents
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-50">
+      <button id="accident" type="submit" onclick="getQuery13()">
+        Most Dangerous Super Cars
+      </button>
+  </div>
+  
+</div>
+
+
+  <div id="getQuery12" class="tables_data">
+
+    <%data=ActiveRecord::Base.connection.exec_query("Select Label, round(avg(ENGINE_CAPACITY_CC),2) as Engine_Capacity from accidents, vehicles, lookup where accidents.Accident_Index = vehicles.Accident_Index and \"Tables\" = 'Accident_Severity' and ACCIDENT_SEVERITY = code  group by label ")%>
+    
+
+        <table style="width: 100%">
+          <thead>
+          <tr>
+            <% data.columns.each do |col| %>
+            <th><%= col %></th>
+            <%end%>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% data.rows.each do |row| %>
+            <tr>
+                <% for c in 1..data.columns.length %>
+                    <td><%= row[c-1] %></td>
+                <%end%>
+              
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+ 
+  </div>
+
+    <div id="getQuery2" class="tables_data">
+
+    <%data=ActiveRecord::Base.connection.exec_query("select make2 as make, vt as vehicle_type, cou3 as Accident_counts from (select * from (select make2, VT , sum(cou2) as cou3 from (select trim(V.make) as make2, M.cou1 as cou2, V.VEHICLE_TYPE as VT from  (select ACCIDENT_INDEX, VEHICLE_REFERENCE, count(*) as cou1 from CASUALTIES where CASUALTY_SEVERITY not in 1 group by ACCIDENT_INDEX, VEHICLE_REFERENCE order by cou1 desc) M, Vehicles V where M.ACCIDENT_INDEX = V.ACCIDENT_INDEX and M.VEHICLE_REFERENCE = V.VEHICLE_REFERENCE ) group by make2, VT) Z where not exists  ( select 1 from (select make2, VT, sum(cou2) as cou3 from (select trim(V.make) as make2, M.cou1 as cou2, V.VEHICLE_TYPE as VT from  (select ACCIDENT_INDEX, VEHICLE_REFERENCE, count(*) as cou1 from CASUALTIES where CASUALTY_SEVERITY = 1 group by ACCIDENT_INDEX, VEHICLE_REFERENCE order by cou1 desc) M, Vehicles V where M.ACCIDENT_INDEX = V.ACCIDENT_INDEX and M.VEHICLE_REFERENCE = V.VEHICLE_REFERENCE ) group by make2, VT) T where Z.make2 = T.make2 and Z.VT = T.VT)) where cou3 = (select max(cou3) from (select * from (select make2, VT, sum(cou2) as cou3 from (select trim(V.make) as make2, M.cou1 as cou2, V.VEHICLE_TYPE as VT from  (select ACCIDENT_INDEX, VEHICLE_REFERENCE, count(*) as cou1 from CASUALTIES where CASUALTY_SEVERITY not in 1 group by ACCIDENT_INDEX, VEHICLE_REFERENCE order by cou1 desc) M, Vehicles V where M.ACCIDENT_INDEX = V.ACCIDENT_INDEX and M.VEHICLE_REFERENCE = V.VEHICLE_REFERENCE ) group by make2, VT) Z where not exists ( select 1 from (select make2, VT, sum(cou2) as cou3 from (select trim(V.make) as make2, M.cou1 as cou2, V.VEHICLE_TYPE as VT from  (select ACCIDENT_INDEX, VEHICLE_REFERENCE, count(*) as cou1 from CASUALTIES where CASUALTY_SEVERITY = 1 group by ACCIDENT_INDEX, VEHICLE_REFERENCE order by cou1 desc) M, Vehicles V where M.ACCIDENT_INDEX = V.ACCIDENT_INDEX and M.VEHICLE_REFERENCE = V.VEHICLE_REFERENCE ) group by make2, VT) T where Z.make2 = T.make2 and Z.VT = T.VT)))")%>
+    
+
+        <table style="width: 100%">
+          <thead>
+          <tr>
+            <% data.columns.each do |col| %>
+            <th><%= col %></th>
+            <%end%>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% data.rows.each do |row| %>
+            <tr>
+                <% for c in 1..data.columns.length %>
+                    <td><%= row[c-1] %></td>
+                <%end%>
+              
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+ 
+  </div>
+
+
+  <div id="getQuery11" class="tables_data">
+
+    <%data=ActiveRecord::Base.connection.exec_query("select * from (select city, count(*) as Accident_Count from accidents, cities where abs(accidents.latitude - cities.latitude) < 0.1 and abs(accidents.longitude - cities.longitude) < 0.1 group by city order by count(*) desc) where rownum < 11")%>
+    
+
+        <table style="width: 100%">
+          <thead>
+          <tr>
+            <% data.columns.each do |col| %>
+            <th><%= col %></th>
+            <%end%>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% data.rows.each do |row| %>
+            <tr>
+                <% for c in 1..data.columns.length %>
+                    <td><%= row[c-1] %></td>
+                <%end%>
+              
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+ 
+  </div>
+
+  <div id="getQuery10" class="tables_data">
+
+    <%data=ActiveRecord::Base.connection.exec_query("select * from (select \"1st_Road_Number\", \"2nd_Road_Number\", count(*) as Accident_count  from accidents where \"1st_Road_Number\" > 0 and \"2nd_Road_Number\" > 0 and \"1st_Road_Number\" not in \"2nd_Road_Number\" group by \"1st_Road_Number\", \"2nd_Road_Number\" order by Accident_count desc) where rownum < 10")%>
+    
+
+        <table style="width: 100%">
+          <thead>
+          <tr>
+            <% data.columns.each do |col| %>
+            <th><%= col %></th>
+            <%end%>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% data.rows.each do |row| %>
+            <tr>
+                <% for c in 1..data.columns.length %>
+                    <td><%= row[c-1] %></td>
+                <%end%>
+              
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+ 
+  </div>
+
+    <div id="getQuery9" class="tables_data">
+
+    <%data=ActiveRecord::Base.connection.exec_query("select Label, count_Crossroad, count_Roundabout, ratio from (select Label, count_Crossroad, count_Roundabout, Round(ratio,2) as ratio, ROW_NUMBER() OVER (Order BY ratio) as TopFive,  ROW_NUMBER() OVER (Order BY ratio Desc) as BottomFive from (select A.LOCAL_AUTHORITY_DISTRICT as District , count_Crossroad, count_Roundabout,  count_Roundabout / count_Crossroad as ratio from  (select LOCAL_AUTHORITY_DISTRICT, count(*) as count_Crossroad from ACCIDENTS where JUNCTION_DETAIL = 6 group by LOCAL_AUTHORITY_DISTRICT) A, (select LOCAL_AUTHORITY_DISTRICT, count(*) as count_Roundabout from ACCIDENTS where JUNCTION_DETAIL in (1,2) group by LOCAL_AUTHORITY_DISTRICT) B where A.LOCAL_AUTHORITY_DISTRICT = B.LOCAL_AUTHORITY_DISTRICT and count_Roundabout > 10 and count_Crossroad > 10) Z, Lookup L where District = L.CODE and \"Tables\" = 'Local_Authority_District') where TopFive <=5 or BottomFive <=5")%>
+    
+
+        <table style="width: 100%">
+          <thead>
+          <tr>
+            <% data.columns.each do |col| %>
+            <th><%= col %></th>
+            <%end%>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% data.rows.each do |row| %>
+            <tr>
+                <% for c in 1..data.columns.length %>
+                    <td><%= row[c-1] %></td>
+                <%end%>
+              
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+ 
+  </div>
+
+    <div id="getQuery8" class="tables_data">
+
+    <%data=ActiveRecord::Base.connection.exec_query("select Label, count_Controlled, count_Uncontrolled, ratio from (select Label, count_Controlled, count_Uncontrolled, Round(ratio,2) as ratio, ROW_NUMBER() OVER (Order BY ratio) as TopFive,  ROW_NUMBER() OVER (Order BY ratio Desc) as BottomFive from (select A.LOCAL_AUTHORITY_DISTRICT as District , count_Controlled,  count_Uncontrolled, count_Uncontrolled / count_Controlled as ratio from  (select LOCAL_AUTHORITY_DISTRICT, count(*) as count_Uncontrolled from ACCIDENTS where JUNCTION_CONTROL = 4 group by LOCAL_AUTHORITY_DISTRICT) A, (select LOCAL_AUTHORITY_DISTRICT, count(*) as count_Controlled from ACCIDENTS where JUNCTION_CONTROL in (1,2,3) group by LOCAL_AUTHORITY_DISTRICT) B where A.LOCAL_AUTHORITY_DISTRICT = B.LOCAL_AUTHORITY_DISTRICT and count_Uncontrolled > 10 and count_Controlled > 10) Z, Lookup L where District = L.CODE and \"Tables\" = 'Local_Authority_District') where TopFive <=5 or BottomFive <=5")%>
+    
+
+        <table style="width: 100%">
+          <thead>
+          <tr>
+            <% data.columns.each do |col| %>
+            <th><%= col %></th>
+            <%end%>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% data.rows.each do |row| %>
+            <tr>
+                <% for c in 1..data.columns.length %>
+                    <td><%= row[c-1] %></td>
+                <%end%>
+              
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+ 
+  </div>
+
+
+<div id="getQuery13" class="tables_data">
+
+    <%data=ActiveRecord::Base.connection.exec_query("select round(avg(accident_severity),2) as severity, count(*) as Accidents, \"model\" from accidents, vehicles where \"model\" not like 'FA%'  and accidents.accident_index = vehicles.accident_index and engine_capacity_cc > 4000 having count (*) > 3 group by \"model\" order by severity asc")%>
+    
+
+        <table style="width: 100%">
+          <thead>
+          <tr>
+            <% data.columns.each do |col| %>
+            <th><%= col %></th>
+            <%end%>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% data.rows.each do |row| %>
+            <tr>
+                <% for c in 1..data.columns.length %>
+                    <td><%= row[c-1] %></td>
+                <%end%>
+              
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+ 
+  </div>
+
+
+<script>
+function getQuery2(){
+  jQuery('.tables_data').hide();
+  jQuery('#getQuery2').show();
+}
+jQuery('.tables_data').hide();
+
+function getQuery8(){
+  jQuery('.tables_data').hide();
+  jQuery('#getQuery8').show();
+}
+jQuery('.tables_data').hide();
+
+function getQuery9(){
+  jQuery('.tables_data').hide();
+  jQuery('#getQuery9').show();
+}
+jQuery('.tables_data').hide();
+
+function getQuery10(){
+  jQuery('.tables_data').hide();
+  jQuery('#getQuery10').show();
+}
+jQuery('.tables_data').hide();
+
+function getQuery11(){
+  jQuery('.tables_data').hide();
+  jQuery('#getQuery11').show();
+}
+jQuery('.tables_data').hide();
+
+function getQuery13(){
+  jQuery('.tables_data').hide();
+  jQuery('#getQuery13').show();
+}
+jQuery('.tables_data').hide();
+
+
+function getQuery12(){
+  jQuery('.tables_data').hide();
+  jQuery('#getQuery12').show();
+}
+jQuery('.tables_data').hide();
+
+
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
+
+<script>function getAccidents() {
+	new Chart(document.getElementById("graph"), {
+    type: 'bar',
+    data: {
+      labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+      datasets: [
+        {
+          label: "Population (millions)",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: [2478,5267,734,784,433]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Predicted world population (millions) in 2050'
+      }
+    }
+});
+} </script>
+
+
+
+<!-- <script>  </script> -->
+
